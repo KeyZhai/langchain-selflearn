@@ -1,0 +1,31 @@
+{
+  "name": "langchain-node-project",
+  "version": "1.0.0",
+  "description": "LangChain project migrated from Deno to Node.js",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@langchain/openai": "^0.3.15",
+    "@langchain/core": "^0.3.70",
+    "langchain": "^0.3.7",
+    "dotenv": "^16.4.7",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.3"
+  },
+  "keywords": [
+    "langchain",
+    "openai",
+    "ai",
+    "chatbot"
+  ],
+  "author": "autumn",
+  "license": "MIT"
+}
