@@ -24,7 +24,7 @@ const model = new ChatOpenAI({
 const retriever = MultiQueryRetriever.fromLLM({
   llm: model,
   retriever: vectorStore.asRetriever(3),
-  queryCount: 3,
+  queryCount: 3,      
   verbose: true
 })
 
