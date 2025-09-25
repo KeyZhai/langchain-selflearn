@@ -6,6 +6,8 @@ import { RunnableSequence } from "@langchain/core/runnables";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
 import { StringOutputParser } from "@langchain/core/output_parsers";
+
+//将.env的配置注入到 process.env 对象中
 import dotenv from "dotenv";
 dotenv.config();
 
