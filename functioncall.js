@@ -46,7 +46,7 @@ const messages = [
 ];
 
 const result = await openai.chat.completions.create({
-  model: "qwen3-max",
+  model: "qwen-flash",
   messages,
   tools,
   tool_choice: "none",
