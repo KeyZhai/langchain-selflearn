@@ -1,4 +1,4 @@
-import { ChatOpenAI } from "langchain/chat_models/openai";
+import { ChatOpenAI } from "@langchain/openai";
 import {
   ChatPromptTemplate,
   MessagesPlaceholder,
@@ -7,11 +7,13 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import {
   RunnablePassthrough,
   RunnableSequence,
+  RunnableWithMessageHistory,
 } from "@langchain/core/runnables";
 import { TextLoader } from "langchain/document_loaders/fs/text";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { AlibabaTongyiEmbeddings } from "@langchain/community/embeddings/alibaba_tongyi";
 import { FaissStore } from "@langchain/community/vectorstores/faiss";
+import { JSONChatHistory } from "./JSONChatHistory.ts";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -24,7 +26,7 @@ const rephraseChainPrompt = ChatPromptTemplate.fromMessages([
   new MessagesPlaceholder("history"),
   ["human", "将以下问题重述为一个独立的问题：\n{question}"],
 ]);
-const rephraseChain = RunnableSequence.fromPromises([
+const rephraseChain = RunnableSequence.from([
   rephraseChainPrompt,
   new ChatOpenAI({
     configuration: {
@@ -99,7 +101,7 @@ const ragChain = RunnableSequence.from([
     standalone_question: rephraseChain,
   }),
   RunnablePassthrough.assign({
-    context: contextRetrieverChain,
+    context: contextRetriverChain,
   }),
   prompt,
   model,
@@ -114,3 +116,13 @@ const ragChainWithHistory = new RunnableWithMessageHistory({
   historyMessagesKey: "history",
   inputMessagesKey: "question",
 });
+
+const res = await ragChainWithHistory.invoke(
+  {
+    question: "什么是球状闪电？",
+  },
+  {
+    configurable: { sessionId: "test-history" },
+  }
+);
+console.log(res);
