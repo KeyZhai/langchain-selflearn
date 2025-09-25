@@ -13,7 +13,7 @@ import { TextLoader } from "langchain/document_loaders/fs/text";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { AlibabaTongyiEmbeddings } from "@langchain/community/embeddings/alibaba_tongyi";
 import { FaissStore } from "@langchain/community/vectorstores/faiss";
-import { JSONChatHistory } from "./JSONChatHistory.ts";
+import { ChatMessageHistory } from "@langchain/core/message_histories";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -98,7 +98,7 @@ const model = new ChatOpenAI({
 
 const ragChain = RunnableSequence.from([
   RunnablePassthrough.assign({
-    standalone_question: rephraseChain,
+    question: rephraseChain,
   }),
   RunnablePassthrough.assign({
     context: contextRetriverChain,
@@ -108,11 +108,17 @@ const ragChain = RunnableSequence.from([
   new StringOutputParser(),
 ]);
 
+// 创建内存中的消息历史存储
+const messageHistoryMap = new Map();
+
 const ragChainWithHistory = new RunnableWithMessageHistory({
   runnable: ragChain,
-  getMessageHistory: (sessionId) =>
-    //todo: build jsonchathistory
-    new JSONChatHistory({ sessionId, dir: chatHistoryDir }),
+  getMessageHistory: (sessionId) => {
+    if (!messageHistoryMap.has(sessionId)) {
+      messageHistoryMap.set(sessionId, new ChatMessageHistory());
+    }
+    return messageHistoryMap.get(sessionId);
+  },
   historyMessagesKey: "history",
   inputMessagesKey: "question",
 });
